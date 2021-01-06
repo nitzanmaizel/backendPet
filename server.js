@@ -1,15 +1,17 @@
 const express = require('express');
+const cors = require('cors');
 const connectDB = require('./config/db');
 
 const app = express();
 
 connectDB();
 
-const PORT = process.env.PORT || 5000;
+app.use(express.json({ extended: false }));
+app.use(cors());
 
-app.get('/', (req, res) => {
-	res.send('<h1>Hello World!!!</h1>');
-});
+app.use('/api/auth', require('./routes/auth'));
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
 	console.log(`Server on http://localhost:${PORT}`);
