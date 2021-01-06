@@ -21,4 +21,16 @@ function auth(req, res, next) {
 	}
 }
 
-module.exports = auth;
+function isAdmin(req, res, next) {
+	try {
+		if (!req.user.isAdmin) {
+			return res.status(403).json({ msg: 'No Admin, authorization denied' });
+		}
+		next();
+	} catch (err) {
+		console.error('isAdmin err', err.message);
+		res.status(403).json({ msg: 'Token is not allowed' });
+	}
+}
+
+module.exports = { auth, isAdmin };
