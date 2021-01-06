@@ -97,6 +97,19 @@ router.post(
 				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
 			}
 
+			const payload = {
+				id: user.id,
+				isAdmin: user.isAdmin,
+			};
+			jwt.sign(payload, jwtSecret, { expiresIn: 3600 }, (err, token) => {
+				if (err) {
+					throw err;
+				}
+				res.cookie('auth_token', token);
+				// user: payload.user,
+				res.json({ token });
+			});
+
 			res.json({ user });
 		} catch (err) {
 			console.error(err.message);
