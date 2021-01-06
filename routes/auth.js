@@ -11,17 +11,29 @@ const { check, validationResult } = require('express-validator');
 
 router.post('/signup', [
 	[
-		check('firstName', 'First name is required').not().isEmpty(),
-		check('lastName', 'Last name is required').not().isEmpty(),
+		check('firstName', 'First name is required').not().isEmpty().trim(),
+		check('lastName', 'Last name is required').not().isEmpty().trim(),
 		check('email', 'Please enter valid email').isEmail(),
 		check('password', 'Password must be greater than 6 character').isLength({ min: 6 }),
+		check('phoneNumber', 'Phone number is required').not().isEmpty().trim(),
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
-		res.send('<h1>User Signup</h1>');
+		const { firstName, lastName, email, password, phoneNumber } = req.body;
+
+		try {
+			let user = await User.findOne({ email });
+			if (user) {
+				console.log(user);
+				return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
+			}
+		} catch (err) {
+			console.error(err.massage);
+			res.status(500).send('Server Error');
+		}
 	},
 ]);
 
