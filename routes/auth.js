@@ -8,13 +8,13 @@ const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
 const jwtSecret = config.get('jwtSecret');
-const { auth, isAdmin } = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 // @route    GET api/auth
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/', auth, isAdmin, async (req, res) => {
+router.get('/', auth, async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id).select('-password');
 		res.json(user);
