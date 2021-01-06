@@ -43,7 +43,9 @@ router.post('/signup', [
 
 			user.password = await bcrypt.hash(password, salt);
 
-			res.send(user);
+			await user.save();
+
+			res.json({ msg: 'User signup' });
 		} catch (err) {
 			console.error(err.massage);
 			res.status(500).send('Server Error');
