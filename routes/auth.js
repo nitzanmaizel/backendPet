@@ -67,4 +67,29 @@ router.post('/signup', [
 	},
 ]);
 
+// @route    POST api/auth/login
+// @desc     Login User
+// @access   Public
+
+router.post(
+	'/login',
+	[
+		check('email', 'Email is invalid').isEmail(),
+		check('password', 'Password is required').exists(),
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+		try {
+			const { email, password } = req.body;
+			res.json({ email, password });
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send('Server error');
+		}
+	}
+);
+
 module.exports = router;
