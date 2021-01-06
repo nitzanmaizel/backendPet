@@ -84,7 +84,13 @@ router.post(
 		}
 		try {
 			const { email, password } = req.body;
-			res.json({ email, password });
+
+			let user = await User.findOne({ email });
+
+			if (!user) {
+				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
+			}
+			res.json({ user });
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server error');
