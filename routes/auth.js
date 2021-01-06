@@ -30,6 +30,20 @@ router.post('/signup', [
 				console.log(user);
 				return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
 			}
+
+			user = new User({
+				firstName,
+				lastName,
+				email,
+				password,
+				phoneNumber,
+			});
+
+			const salt = await bcrypt.genSalt(10);
+
+			user.password = await bcrypt.hash(password, salt);
+
+			res.send(user);
 		} catch (err) {
 			console.error(err.massage);
 			res.status(500).send('Server Error');
