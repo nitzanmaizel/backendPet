@@ -194,15 +194,34 @@ router.put(
 // @desc     Save pet to user collection
 // @access   Privet
 
-router.post('/:id/:userId/save', async (req, res) => {
+router.post('/:id/save', async (req, res) => {
 	try {
 		const petID = req.params.id;
-		const userID = req.params.userId;
+		const userID = req.user.id;
 		console.log({ petID, userID });
 		let user = await User.findOne({ _id: userID });
 		console.log(user);
 		user.savedPets.push(petID);
 		console.log(user);
+		await user.save();
+		res.json(user);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route    DELETE api/pets/:id/save
+// @desc     Delete saved pet from user collection
+// @access   Privet
+
+router.delete('/:id/save/:userId', async (req, res) => {
+	try {
+		const petID = req.params.id;
+		const userID = req.params.userId;
+		let user = await User.findOne({ _id: userID });
+		const index = user.savedPets.indexOf(petID);
+		user.savedPets.splice(index, 1);
 		await user.save();
 		res.json(user);
 	} catch (err) {
