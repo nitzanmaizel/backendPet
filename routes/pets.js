@@ -119,4 +119,74 @@ router.get('/:id', async (req, res) => {
 	}
 });
 
+// @route    PUT api/pets/:id
+// @desc     Update pet
+// @access   privet Admin
+
+router.put(
+	'/:id',
+	[
+		check('type', 'Type name is required').not().isEmpty(),
+		check('name', 'Name name is required').not().isEmpty(),
+		check('adoptionStatus', 'Adoption Status is required').not().isEmpty(),
+		check('image', 'Image  is required').not().isEmpty(),
+		check('height', 'Height  is required').not().isEmpty(),
+		check('weight', 'Weight  is required').not().isEmpty(),
+		check('color', 'Color  is required').not().isEmpty(),
+		check('bio', 'Bio  is required').not().isEmpty(),
+		check('hypoallergenic', 'Hypoallergenic  is required').isBoolean(),
+		check('dietaryRestrictions', 'Dietary Restrictions  is required').not().isEmpty(),
+		check('breed', 'Breed  is required').not().isEmpty(),
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		const {
+			type,
+			name,
+			adoptionStatus,
+			// image,
+			height,
+			weight,
+			color,
+			bio,
+			hypoallergenic,
+			dietaryRestrictions,
+			breed,
+		} = req.body;
+		try {
+			let UpdatedPet = {
+				type,
+				name,
+				adoptionStatus,
+				// image,
+				height,
+				weight,
+				color,
+				bio,
+				hypoallergenic,
+				dietaryRestrictions,
+				breed,
+			};
+			const pet = await Pet.findOneAndUpdate(
+				{ _id: req.params.id },
+				{ $set: UpdatedPet },
+				{ new: true },
+				(err, update) => {
+					if (err) {
+						res.status(400).log('No found');
+					}
+					res.json(update);
+				}
+			);
+		} catch (err) {
+			console.error(err);
+			res.status(500).send('Server Error');
+		}
+	}
+);
+
 module.exports = router;
