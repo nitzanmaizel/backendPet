@@ -21,6 +21,20 @@ router.get('/', async (req, res) => {
 	}
 });
 
+// @route    GET api/users/:id
+// @desc     Get by ID
+// @access   Privet Admin
+
+router.get('/:id', async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.params.id }).select('-password');
+		res.json(user);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
 // @route    GET /users/mypets
 // @desc     Get user saved pets && owns
 // @access   Privet
