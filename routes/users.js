@@ -10,7 +10,10 @@ const { auth, isAdmin } = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
 	try {
-		const users = await User.find({}).select('-password');
+		const users = await User.find({})
+			.populate('userPets')
+			.populate('savedPets')
+			.select('-password');
 		res.json(users);
 	} catch (err) {
 		console.error(err.massage);
