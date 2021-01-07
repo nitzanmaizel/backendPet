@@ -60,7 +60,6 @@ router.post(
 		} = req.body;
 
 		try {
-			// Create User fom model ==>
 			let pet = new Pet({
 				type,
 				name,
@@ -74,7 +73,6 @@ router.post(
 				dietaryRestrictions,
 				breed,
 			});
-			// Save the Pet ==>
 			await pet.save();
 			res.json('Add success');
 		} catch (err) {
@@ -101,6 +99,20 @@ router.get('/search', async (req, res) => {
 			return res.status(404).send({ err: `No pets found, try again ` });
 		}
 		res.json(pets);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route    GET api/pets/:id
+// @desc     Get pet by ID
+// @access   Public
+
+router.get('/:id', async (req, res) => {
+	try {
+		const pet = await Pet.findOne({ _id: req.params.id });
+		res.json(pet);
 	} catch (err) {
 		console.error(err.massage);
 		res.status(500).send('Server Error');
