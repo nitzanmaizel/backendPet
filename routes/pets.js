@@ -84,4 +84,27 @@ router.post(
 	}
 );
 
+// @route    GET api/pets/search/:type
+// @desc     Get pets By Type && By query's
+// @access   Public
+
+router.get('/search', async (req, res) => {
+	try {
+		let filter = {};
+		if (req.query.adoptionStatus) filter.adoptionStatus = req.query.adoptionStatus;
+		if (req.query.height) filter.height = parseInt(req.query.height);
+		if (req.query.weight) filter.weight = parseInt(req.query.weight);
+		if (req.query.type) filter.type = req.query.type;
+		if (req.query.name) filter.name = req.query.name;
+		const pets = await Pet.find(filter);
+		if (pets.length === 0) {
+			return res.status(404).send({ err: `No pets found, try again ` });
+		}
+		res.json(pets);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
