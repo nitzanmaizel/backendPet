@@ -21,4 +21,21 @@ router.get('/', async (req, res) => {
 	}
 });
 
+// @route    GET /users/mypets
+// @desc     Get user saved pets && owns
+// @access   Privet
+
+router.get('/mypets', auth, async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.user.id })
+			.populate('userPets')
+			.populate('savedPets')
+			.select('-password');
+		res.json({ savedPets: user.savedPets, userPets: user.userPets });
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
