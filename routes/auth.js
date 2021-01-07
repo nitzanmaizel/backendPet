@@ -10,20 +10,6 @@ const { check, validationResult } = require('express-validator');
 const jwtSecret = config.get('jwtSecret');
 const { auth } = require('../middleware/auth');
 
-// @route    GET api/auth
-// @desc     Get logged in user
-// @access   Private
-
-router.get('/', auth, async (req, res) => {
-	try {
-		const user = await User.findById(req.user.id).select('-password');
-		res.json(user);
-	} catch (err) {
-		console.error(err.massage);
-		res.status(500).send('Server error');
-	}
-});
-
 // @route    POST api/auth/signup
 // @desc     Signup User
 // @access   Public
@@ -73,6 +59,7 @@ router.post('/signup', [
 				if (err) {
 					throw err;
 				}
+				res.cookie('auth_token', token);
 				res.json({ token });
 			});
 		} catch (err) {
@@ -99,7 +86,7 @@ router.post(
 		}
 		try {
 			const { email, password } = req.body;
-
+			// See if the User exists ==>
 			let user = await User.findOne({ email });
 
 			if (!user) {
@@ -111,7 +98,6 @@ router.post(
 			if (!isMatch) {
 				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
 			}
-
 			const payload = {
 				id: user.id,
 				isAdmin: user.isAdmin,
@@ -120,6 +106,7 @@ router.post(
 				if (err) {
 					throw err;
 				}
+				res.cookie('auth_token', token);
 				res.json({ token });
 			});
 		} catch (err) {
@@ -128,5 +115,19 @@ router.post(
 		}
 	}
 );
+
+// @route    GET api/auth
+// @desc     Get logged in user
+// @access   Private
+
+router.get('/', auth, async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.user.id });
+		res.json(user);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server error');
+	}
+});
 
 module.exports = router;

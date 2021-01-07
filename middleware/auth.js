@@ -3,16 +3,15 @@ const config = require('config');
 const jwtSecret = config.get('jwtSecret');
 
 function auth(req, res, next) {
-	// Get token from header
-	const token = req.header('x-auth-token');
+	const token = req.cookies.auth_token;
 
-	// Check if no token
 	if (!token) {
-		return res.status(401).json({ msg: 'No Token, authorization denied' });
+		return res.status(401).json({ msg: 'No token, authorization denied' });
 	}
 
 	try {
 		const decoded = jwt.verify(token, jwtSecret);
+
 		req.user = decoded;
 		next();
 	} catch (err) {
@@ -24,7 +23,7 @@ function auth(req, res, next) {
 function isAdmin(req, res, next) {
 	try {
 		if (!req.user.isAdmin) {
-			return res.status(403).json({ msg: 'No Admin, authorization denied' });
+			return res.status(403).json({ msg: 'not allowed' });
 		}
 		next();
 	} catch (err) {
@@ -33,4 +32,4 @@ function isAdmin(req, res, next) {
 	}
 }
 
-module.exports = { auth, isAdmin };
+module.exports = { isAdmin, auth };
