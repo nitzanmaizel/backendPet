@@ -5,30 +5,16 @@ const { check, validationResult } = require('express-validator');
 const { auth, isAdmin } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 
-// @route    GET api/users
-// @desc     Get all Users
-// @access   Privet Admin
-
-router.get('/', async (req, res) => {
-	try {
-		const users = await User.find({})
-			.populate('userPets')
-			.populate('savedPets')
-			.select('-password');
-		res.json(users);
-	} catch (err) {
-		console.error(err.massage);
-		res.status(500).send('Server Error');
-	}
-});
-
 // @route    GET api/users/:id
 // @desc     Get by ID
 // @access   Privet Admin
 
 router.get('/:id', async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.params.id }).select('-password');
+		const user = await User.findOne({ _id: req.params.id })
+			.populate('userPets')
+			.populate('savedPets')
+			.select('-password');
 		res.json(user);
 	} catch (err) {
 		console.error(err.massage);
@@ -83,17 +69,14 @@ router.put(
 	}
 );
 
-// @route    GET /users/mypets
-// @desc     Get user saved pets && owns
-// @access   Privet
+// @route    GET api/users
+// @desc     Get all Users
+// @access   Privet Admin
 
-router.get('/mypets', auth, async (req, res) => {
+router.get('/', async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.user.id })
-			.populate('userPets')
-			.populate('savedPets')
-			.select('-password');
-		res.json({ savedPets: user.savedPets, userPets: user.userPets });
+		const users = await User.find({}).select('-password');
+		res.json(users);
 	} catch (err) {
 		console.error(err.massage);
 		res.status(500).send('Server Error');

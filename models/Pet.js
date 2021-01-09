@@ -13,10 +13,10 @@ const PetScheme = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	// image: {
-	// 	type: String,
-	// 	required: true,
-	// },
+	petImage: {
+		type: String,
+		required: true,
+	},
 	height: {
 		type: Number,
 		required: true,

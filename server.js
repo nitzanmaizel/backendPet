@@ -1,13 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-var cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
+const path = require('path');
 const app = express();
 
 // Connect MongoDB ==>
 connectDB();
 
-app.use(express.json({ extended: false }));
+app.use(express.json({ extended: false, limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 app.use(cookieParser());
 
@@ -15,6 +17,14 @@ app.use(cookieParser());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/pets', require('./routes/pets'));
 app.use('/api/users', require('./routes/users'));
+
+if (process.env.NODE_ENV === 'production') {
+	app.use(express.static('client/build'));
+
+	app.get('*', (req, res) =>
+		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+	);
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -3,12 +3,15 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const Pet = require('../models/Pet');
 const User = require('../models/User');
+const { cloudinary } = require('../config/cloudinary');
+
+const { auth, isAdmin } = require('../middleware/auth');
 
 // @route    GET api/pets
 // @desc     Get all pets
 // @access   Privet
 
-router.get('/', async (req, res) => {
+router.get('/all', auth, isAdmin, async (req, res) => {
 	try {
 		const pets = await Pet.find({});
 		if (pets.length === 0) {
@@ -27,18 +30,20 @@ router.get('/', async (req, res) => {
 
 router.post(
 	'/addpet',
+	auth,
+	isAdmin,
 	[
 		check('type', 'Type name is required').not().isEmpty(),
-		check('name', 'Name name is required').not().isEmpty(),
+		check('name', 'Name name is required').not().isEmpty().trim(),
 		check('adoptionStatus', 'Adoption Status is required').not().isEmpty(),
-		// check('image', 'Image  is required').not().isEmpty(),
-		check('height', 'Height  is required').not().isEmpty(),
-		check('weight', 'Weight  is required').not().isEmpty(),
-		check('color', 'Color  is required').not().isEmpty(),
-		check('bio', 'Bio  is required').not().isEmpty(),
+		check('image', 'Image  is required').not().isEmpty(),
+		check('height', 'Height  is required').not().isEmpty().trim(),
+		check('weight', 'Weight  is required').not().isEmpty().trim(),
+		check('color', 'Color  is required').not().isEmpty().trim(),
+		check('bio', 'Bio  is required').not().isEmpty().trim(),
 		check('hypoallergenic', 'Hypoallergenic  is required').isBoolean(),
-		check('dietaryRestrictions', 'Dietary Restrictions  is required').not().isEmpty(),
-		check('breed', 'Breed  is required').not().isEmpty(),
+		check('dietaryRestrictions', 'Dietary Restrictions  is required').not().isEmpty().trim(),
+		check('breed', 'Breed  is required').not().isEmpty().trim(),
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
@@ -50,7 +55,7 @@ router.post(
 			type,
 			name,
 			adoptionStatus,
-			// image,
+			image,
 			height,
 			weight,
 			color,
@@ -60,14 +65,19 @@ router.post(
 			breed,
 		} = req.body;
 
+		const uploadResponse = await cloudinary.uploader.upload(image, {
+			upload_preset: 'petAdoption',
+		});
+
 		try {
+			let petImage = uploadResponse.url;
 			let pet = new Pet({
 				type,
-				name,
+				name: name.toLowerCase(),
 				adoptionStatus,
-				// image,
-				height,
-				weight,
+				petImage,
+				height: parseInt(height),
+				weight: parseInt(weight),
 				color,
 				bio,
 				hypoallergenic,
@@ -75,7 +85,7 @@ router.post(
 				breed,
 			});
 			await pet.save();
-			res.json('Add success');
+			res.json({ msg: 'Pet added' });
 		} catch (err) {
 			console.error(err);
 			res.status(500).send('Server Error');
@@ -113,9 +123,16 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	try {
 		const pet = await Pet.findOne({ _id: req.params.id });
+		// console.log(pet);
+		// const { resources } = await cloudinary.search
+		// 	.expression('folder:pet-adoption')
+		// 	.sort_by('public_id')
+		// 	.max_results(30)
+		// 	.execute();
+		// const publicIds = resources.map((file) => file.public_id);
 		res.json(pet);
 	} catch (err) {
-		console.error(err.massage);
+		console.error(err);
 		res.status(500).send('Server Error');
 	}
 });
@@ -126,18 +143,20 @@ router.get('/:id', async (req, res) => {
 
 router.put(
 	'/:id',
+	auth,
+	isAdmin,
 	[
 		check('type', 'Type name is required').not().isEmpty(),
-		check('name', 'Name name is required').not().isEmpty(),
+		check('name', 'Name name is required').not().isEmpty().trim(),
 		check('adoptionStatus', 'Adoption Status is required').not().isEmpty(),
 		check('image', 'Image  is required').not().isEmpty(),
-		check('height', 'Height  is required').not().isEmpty(),
-		check('weight', 'Weight  is required').not().isEmpty(),
-		check('color', 'Color  is required').not().isEmpty(),
-		check('bio', 'Bio  is required').not().isEmpty(),
+		check('height', 'Height  is required').not().isEmpty().trim(),
+		check('weight', 'Weight  is required').not().isEmpty().trim(),
+		check('color', 'Color  is required').not().isEmpty().trim(),
+		check('bio', 'Bio  is required').not().isEmpty().trim(),
 		check('hypoallergenic', 'Hypoallergenic  is required').isBoolean(),
-		check('dietaryRestrictions', 'Dietary Restrictions  is required').not().isEmpty(),
-		check('breed', 'Breed  is required').not().isEmpty(),
+		check('dietaryRestrictions', 'Dietary Restrictions  is required').not().isEmpty().trim(),
+		check('breed', 'Breed  is required').not().isEmpty().trim(),
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
@@ -149,7 +168,7 @@ router.put(
 			type,
 			name,
 			adoptionStatus,
-			// image,
+			image,
 			height,
 			weight,
 			color,
@@ -158,12 +177,13 @@ router.put(
 			dietaryRestrictions,
 			breed,
 		} = req.body;
+
 		try {
 			let UpdatedPet = {
 				type,
 				name,
 				adoptionStatus,
-				// image,
+				image,
 				height,
 				weight,
 				color,
@@ -194,13 +214,17 @@ router.put(
 // @desc     Save pet to user collection
 // @access   Privet
 
-router.post('/:id/save', async (req, res) => {
+router.get('/save/:id', auth, async (req, res) => {
 	try {
 		const petID = req.params.id;
 		const userID = req.user.id;
 		console.log({ petID, userID });
 		let user = await User.findOne({ _id: userID });
-		console.log(user);
+		const isSaved = user.savedPets.some((id) => id === petID);
+		console.log(isSaved);
+		// if (isSaved) {
+		// 	return res.status(400).json({ msg: 'Pet already saved' });
+		// }
 		user.savedPets.push(petID);
 		console.log(user);
 		await user.save();
@@ -215,10 +239,10 @@ router.post('/:id/save', async (req, res) => {
 // @desc     Delete saved pet from user collection
 // @access   Privet
 
-router.delete('/:id/save/:userId', async (req, res) => {
+router.delete('/:id/save', auth, async (req, res) => {
 	try {
 		const petID = req.params.id;
-		const userID = req.params.userId;
+		const userID = req.user.id;
 		let user = await User.findOne({ _id: userID });
 		const index = user.savedPets.indexOf(petID);
 		user.savedPets.splice(index, 1);
@@ -229,5 +253,39 @@ router.delete('/:id/save/:userId', async (req, res) => {
 		res.status(500).send('Server Error');
 	}
 });
+
+// @route    GET api/pets/mypets/saved
+// @desc     Get user saved pets
+// @access   Privet
+
+router.get('/mypets/all', auth, async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.user.id })
+			.populate('savedPets')
+			.populate('userPets')
+			.select('-password');
+		console.log('user', user);
+		res.json({ saved: user.savedPets, userPet: user.userPets });
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
+// // @route    GET api/pets/mypets/owned
+// // @desc     Get user owns pets
+// // @access   Privet
+
+// router.get('/mypets/own', auth, async (req, res) => {
+// 	try {
+// 		const user = await User.findOne({ _id: req.user.id })
+// 			.populate('userPets')
+// 			.select('-password');
+// 		res.json(user.userPets);
+// 	} catch (err) {
+// 		console.error(err.massage);
+// 		res.status(500).send('Server Error');
+// 	}
+// });
 
 module.exports = router;
