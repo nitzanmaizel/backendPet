@@ -123,13 +123,6 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	try {
 		const pet = await Pet.findOne({ _id: req.params.id });
-		// console.log(pet);
-		// const { resources } = await cloudinary.search
-		// 	.expression('folder:pet-adoption')
-		// 	.sort_by('public_id')
-		// 	.max_results(30)
-		// 	.execute();
-		// const publicIds = resources.map((file) => file.public_id);
 		res.json(pet);
 	} catch (err) {
 		console.error(err);
@@ -218,15 +211,9 @@ router.get('/save/:id', auth, async (req, res) => {
 	try {
 		const petID = req.params.id;
 		const userID = req.user.id;
-		console.log({ petID, userID });
 		let user = await User.findOne({ _id: userID });
 		const isSaved = user.savedPets.some((id) => id === petID);
-		console.log(isSaved);
-		// if (isSaved) {
-		// 	return res.status(400).json({ msg: 'Pet already saved' });
-		// }
 		user.savedPets.push(petID);
-		console.log(user);
 		await user.save();
 		res.json(user);
 	} catch (err) {
@@ -264,7 +251,6 @@ router.get('/mypets/all', auth, async (req, res) => {
 			.populate('savedPets')
 			.populate('userPets')
 			.select('-password');
-		console.log('user', user);
 		res.json({ saved: user.savedPets, userPet: user.userPets });
 	} catch (err) {
 		console.error(err.massage);
