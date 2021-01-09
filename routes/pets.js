@@ -4,7 +4,7 @@ const { check, validationResult } = require('express-validator');
 const Pet = require('../models/Pet');
 const User = require('../models/User');
 
-const { cloudinary } = require('../config/cloudinary');
+const { cloudinary } = require('../utili/cloudinary');
 
 const { auth, isAdmin } = require('../middleware/auth');
 
