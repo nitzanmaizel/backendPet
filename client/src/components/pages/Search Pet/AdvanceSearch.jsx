@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import PetContext from '../../../context/pets/petContext';
 export default function AdvanceSearch(props) {

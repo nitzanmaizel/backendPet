@@ -8,16 +8,16 @@ const AddPet = () => {
 	const { addPet, currentPet } = petContext;
 
 	const [formData, setFormData] = useState({
-		type: currentPet.type || 'Dog',
-		name: currentPet.name || '',
-		adoptionStatus: currentPet.adoptionStatus || 'Available',
-		height: currentPet.height || 0,
-		weight: currentPet.weight || 0,
-		color: currentPet.color || '',
-		bio: currentPet.bio || '',
-		dietaryRestrictions: currentPet.dietaryRestrictions || '',
-		breed: currentPet.breed || '',
-		hypoallergenic: currentPet.hypoallergenic || false,
+		type: 'Dog',
+		name: 'Rex',
+		adoptionStatus: 'Available',
+		height: 50,
+		weight: 30,
+		color: 'Brown',
+		bio: 'Rex is a good DOG!!! ',
+		dietaryRestrictions: 'none',
+		breed: 'Who Know?',
+		hypoallergenic: false,
 	});
 	const [imageState, setImageState] = useState('');
 	const [previewPetImage, setPreviewPetImage] = useState(currentPet.petImage || '');
@@ -65,18 +65,18 @@ const AddPet = () => {
 			};
 			try {
 				addPet(newPet);
-				setFormData({
-					type: 'Dog',
-					name: '',
-					adoptionStatus: 'Available',
-					height: 0,
-					weight: 0,
-					color: '',
-					bio: '',
-					dietaryRestrictions: '',
-					breed: '',
-					hypoallergenic: false,
-				});
+				// setFormData({
+				// 	type: 'Dog',
+				// 	name: '',
+				// 	adoptionStatus: 'Available',
+				// 	height: 0,
+				// 	weight: 0,
+				// 	color: '',
+				// 	bio: '',
+				// 	dietaryRestrictions: '',
+				// 	breed: '',
+				// 	hypoallergenic: false,
+				// });
 				setImageState('');
 				setPreviewPetImage('');
 			} catch (err) {

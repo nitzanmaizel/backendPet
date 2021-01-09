@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Card, Image, Collapse, Col, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { ListGroup, ListGroupItem, Card, Col, Row } from 'react-bootstrap';
 import './PetItem.css';
 
 export default function PetItem(props) {
-	const [open, setOpen] = useState(false);
 	const [status, setStatus] = useState(null);
 	const [name, setName] = useState(null);
 	const [hypoallergenic, setHypoallergenic] = useState(null);
-	console.log(props);
-
-	const history = useHistory();
-	const goToProfile = () => {
-		history.push(`/petprofile/${_id}`);
-	};
 
 	const { _id, petImage, type, adoptionStatus, height, weight } = props.pet;
 
@@ -35,6 +28,7 @@ export default function PetItem(props) {
 			}
 		};
 		setPetData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

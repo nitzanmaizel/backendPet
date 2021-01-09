@@ -11,7 +11,7 @@ const SearchPet = () => {
 
 	const [open, setOpen] = useState(false);
 
-	// useEffect(() => {}, [petsList]);
+	useEffect(() => {}, [petsList]);
 
 	const openAdvanceSearch = () => {
 		setOpen(open ? false : true);

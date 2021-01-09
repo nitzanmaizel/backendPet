@@ -7,7 +7,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
 
-const jwtSecret = config.get('jwtSecret');
+// const jwtSecret = process.env;
 const { auth } = require('../middleware/auth');
 
 // @route    POST api/auth/signup
@@ -54,7 +54,7 @@ router.post('/signup', [
 				isAdmin: user.isAdmin,
 			};
 
-			jwt.sign(payload, jwtSecret, { expiresIn: 360000 }, (err, token) => {
+			jwt.sign(payload, process.env.jwtSecret, { expiresIn: 360000 }, (err, token) => {
 				if (err) {
 					throw err;
 				}
@@ -101,7 +101,7 @@ router.post(
 				id: user.id,
 				isAdmin: user.isAdmin,
 			};
-			jwt.sign(payload, jwtSecret, { expiresIn: 3600 }, (err, token) => {
+			jwt.sign(payload, process.env.jwtSecret, { expiresIn: 3600 }, (err, token) => {
 				if (err) {
 					throw err;
 				}
@@ -109,7 +109,7 @@ router.post(
 				res.json({ token });
 			});
 		} catch (err) {
-			console.error(err.message);
+			console.error(err);
 			res.status(500).send('Server error');
 		}
 	}

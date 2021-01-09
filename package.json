@@ -21,6 +21,7 @@
 	"homepage": "https://github.com/israeltechchallenge/pet-adoption-back-end-nitzanmaizel#readme",
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
+		"cloudinary": "^1.21.0",
 		"config": "^3.3.3",
 		"cookie-parser": "^1.4.5",
 		"cors": "^2.8.5",
@@ -29,7 +30,6 @@
 		"express-validator": "^6.9.0",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.11.8",
-		"cloudinary": "^1.21.0",
 		"react-router-dom": "^5.2.0"
 	},
 	"devDependencies": {

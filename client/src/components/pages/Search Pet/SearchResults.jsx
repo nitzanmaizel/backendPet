@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Row, Image } from 'react-bootstrap';
+import { Card, Row, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 export default function SearchResults(props) {
 	const [status, setStatus] = useState(null);

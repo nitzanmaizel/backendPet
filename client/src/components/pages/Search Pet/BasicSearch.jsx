@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Form, Button, Col, Row } from 'react-bootstrap';
 import PetContext from '../../../context/pets/petContext';
 import AlertMsg from '../../utility/AlertMsg';
-import AlertContext from '../../../context/alert/alertContext';
 
 const BasicSearch = (props) => {
 	const petContext = useContext(PetContext);
 	const { searchPetByQueries } = petContext;
-	const alertContext = useContext(AlertContext);
-	const { alert } = alertContext;
 	const [type, setType] = useState('Dog');
 	const [disable, setDisable] = useState(false);
 	const [error, setError] = useState(null);

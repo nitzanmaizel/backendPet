@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { Fragment, useState, useEffect, useContext } from 'react';
-import { Form, Button, Card, Col, Row, Image } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { Button, Card, Col, Row, Image } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import PetContext from '../../../context/pets/petContext';
 import { Link } from 'react-router-dom';

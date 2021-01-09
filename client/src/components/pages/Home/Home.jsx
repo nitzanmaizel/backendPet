@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 import AuthContext from '../../../context/auth/authContext';
 
 const Home = () => {

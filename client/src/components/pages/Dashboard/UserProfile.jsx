@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState, useEffect } from 'react';
+import React, { Fragment, useContext, useEffect } from 'react';
 import { Switch, Route, useParams, useRouteMatch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import UsersPetsBar from '../../layout/UsersPetsBar';

@@ -3,6 +3,7 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const Pet = require('../models/Pet');
 const User = require('../models/User');
+
 const { cloudinary } = require('../config/cloudinary');
 
 const { auth, isAdmin } = require('../middleware/auth');
@@ -65,11 +66,10 @@ router.post(
 			breed,
 		} = req.body;
 
-		const uploadResponse = await cloudinary.uploader.upload(image, {
-			upload_preset: 'petAdoption',
-		});
-
 		try {
+			const uploadResponse = await cloudinary.uploader.upload(image, {
+				upload_preset: 'petAdoption',
+			});
 			let petImage = uploadResponse.url;
 			let pet = new Pet({
 				type,
