@@ -59,7 +59,7 @@ router.post('/signup', [
 					throw err;
 				}
 				res.cookie('auth_token', token);
-				res.json({ token });
+				res.json({ user });
 			});
 		} catch (err) {
 			console.error(err.massage);
@@ -106,7 +106,7 @@ router.post(
 					throw err;
 				}
 				res.cookie('auth_token', token);
-				res.json({ token });
+				res.json({ user });
 			});
 		} catch (err) {
 			console.error(err);
