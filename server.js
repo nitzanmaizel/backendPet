@@ -26,6 +26,10 @@ app.use('/api/users', require('./routes/users'));
 // 	);
 // }
 
+app.get('/test', (req, res) => {
+	res.json('works');
+});
+
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
 	console.log(`Server start on http://localhost:${PORT}`);
