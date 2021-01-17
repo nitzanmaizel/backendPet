@@ -9,6 +9,18 @@ const app = express();
 // Connect MongoDB ==>
 connectDB();
 
+app.use((req, res) => {
+	console.log(req);
+	res.json({
+		baseUrl: req.baseUrl,
+		path: req.path,
+		originalUrl: req.originalUrl,
+		hostname: req.hostname,
+		protocol: req.protocol,
+		method: req.method,
+	});
+});
+
 app.use(express.json({ extended: false, limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
