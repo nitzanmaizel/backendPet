@@ -93,7 +93,7 @@ router.post(
 	}
 );
 
-// @route    GET api/pets/search/:type
+// @route    GET api/pets/search
 // @desc     Get pets By Type && By query's
 // @access   Public
 
